@@ -1,1567 +1,299 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Karim Travel Pro - Suite Complète</title>
-
-    <!-- Fonts & Tailwind CSS -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
-        rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karim Travel Pro - Réservation Avancée au Sénégal</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Manrope', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#fffbeb',
-                            100: '#fef3c7',
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
-                            bg: '#070b14',
-                            panel: '#0f172a',
-                            card: '#1e293b',
-                            border: '#334155',
-                            wave: '#1dc4e9',
-                            om: '#ff7900'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body {
-            background-color: #070b14;
-            color: #f8fafc;
-            font-family: 'Manrope', sans-serif;
-            touch-action: manipulation;
-        }
+        @keyframes drive {
+            0% {
+                transform: translateX(-150px);
+            }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-
-        @keyframes pulse-glow {
-
-            0%,
             100% {
-                box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
-            }
-
-            50% {
-                box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+                transform: translateX(calc(100vw + 150px));
             }
         }
 
-        .glow-gold {
-            animation: pulse-glow 3s infinite;
+        .car-animation {
+            animation: drive 10s linear infinite;
         }
 
-        @keyframes status-pulse-red {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.5;
-                transform: scale(0.98);
-            }
-        }
-
-        .status-bad {
-            animation: status-pulse-red 1.2s infinite;
-        }
-
-        @keyframes status-pulse-green {
-
-            0%,
-            100% {
-                box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 2px rgba(34, 197, 94, 0.1);
-            }
-        }
-
-        .status-ok {
-            animation: status-pulse-green 2s infinite;
-        }
-
-        /* Print styles */
-        @media print {
-            body {
-                background: white;
-                color: black;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-
-            .print-only {
-                display: block !important;
-            }
-        }
-
-        .print-only {
-            display: none;
+        .glass-pro {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.92));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(217, 119, 6, 0.35);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col bg-[#070b14] text-slate-100 selection:bg-amber-500 selection:text-black">
+<body
+    class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- PRINT RECEIPT TEMPLATE -->
-    <div id="printSection" class="print-only p-8 text-black font-mono">
-        <div class="text-center border-b-2 border-black pb-4 mb-4">
-            <h1 class="text-2xl font-bold">KARIM TRAVEL PRO</h1>
-            <p class="text-sm">Rapport de Service & Bilan Financier</p>
-            <p class="text-xs" id="printDate">Date: --</p>
-        </div>
-        <div id="printContent" class="space-y-4"></div>
-    </div>
-
-    <!-- MAIN APP CONTAINER (no-print) -->
-    <div id="app" class="no-print flex-1 flex flex-col">
-        <!-- Sélecteur des 14 régions -->
-        <div class="form-group">
-            <label for="region-select">Sélectionnez une région :</label>
-            <select id="region-select">
-                <option value="">-- Choisissez une région --</option>
-                <option value="Dakar">Dakar</option>
-                <option value="Diourbel">Diourbel</option>
-                <option value="Fatick">Fatick</option>
-                <option value="Kaffrine">Kaffrine</option>
-                <option value="Kaolack">Kaolack</option>
-                <option value="Kédougou">Kédougou</option>
-                <option value="Kolda">Kolda</option>
-                <option value="Louga">Louga</option>
-                <option value="Matam">Matam</option>
-                <option value="Saint-Louis">Saint-Louis</option>
-                <option value="Sédhiou">Sédhiou</option>
-                <option value="Tambacounda">Tambacounda</option>
-                <option value="Thiès">Thiès</option>
-                <option value="Ziguinchor">Ziguinchor</option>
-            </select>
-        </div>
-
-        <!-- Zone où les réservations s'affichent -->
-        <div class="results-section">
-            <h3>Affichage des Réservations</h3>
-            <div id="display-area">
-                <p>Aucune région sélectionnée.</p>
-            </div>
-        </div>
-        <header
-            class="sticky top-0 z-40 bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-xl">
-            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-
-                <!-- Brand Logo -->
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">
-                        <svg class="w-6 h-6 fill-slate-950" viewBox="0 0 24 24">
-                            <path
-                                d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h1
-                            class="font-extrabold text-lg tracking-tight leading-none text-white flex items-center gap-2">
-                            KARIM TRAVEL <span
-                                class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded-full font-bold">PRO
-                                SUITE</span>
-                        </h1>
-                        <p class="text-xs text-slate-400 font-medium" id="headerDate">--/--/----</p>
-                    </div>
-                </div>
-
-                <!-- Mode Switcher (Chauffeur / Boss) -->
-                <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800">
-                    <button id="btnModeDriver" onclick="switchMode('driver')"
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md">
-                        <span>🚗</span> Mode Chauffeur
-                    </button>
-                    <button id="btnModeBoss" onclick="switchMode('boss')"
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
-                        <span>👑</span> Boss / Propriétaire
-                    </button>
-                </div>
-
-                <!-- Actions & Live Clock -->
-                <div class="flex items-center gap-2">
-                    <div class="hidden sm:flex flex-col text-right pr-2 border-r border-slate-800">
-                        <span id="topClock" class="font-mono text-sm font-bold text-amber-400">00:00:00</span>
-                        <span class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Heure Dakar</span>
-                    </div>
-
-                    <button onclick="exportBilanPrint()" title="Imprimer / Exporter"
-                        class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-                            </path>
-                        </svg>
-                        <span class="hidden md:inline">Imprimer</span>
-                    </button>
-
-                    <button onclick="resetDay()"
-                        class="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl border border-rose-500/20 text-xs font-semibold flex items-center gap-1 transition"
-                        title="Nouvelle journée">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                            </path>
-                        </svg>
-                        <span class="hidden lg:inline">RAZ Journée</span>
-                    </button>
-                </div>
-
-            </div>
-        </header>
-
-        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
-
-            <!-- Financial Summary Cards (KPIs) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <!-- Gains -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden group">
-                    <div
-                        class="absolute -right-2 -bottom-2 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition">
-                    </div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Gains Brut</span>
-                    <div class="text-2xl md:text-3xl font-extrabold text-emerald-400 font-mono mt-1" id="kpiGains">0 F
-                    </div>
-                    <span class="text-[11px] text-slate-500 mt-1 block"><span id="kpiCountRides">0</span> courses
-                        effectuées</span>
-                </div>
-
-                <!-- Dépenses -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden group">
-                    <div
-                        class="absolute -right-2 -bottom-2 w-16 h-16 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition">
-                    </div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Dépenses Jour</span>
-                    <div class="text-2xl md:text-3xl font-extrabold text-rose-400 font-mono mt-1" id="kpiDeps">0 F</div>
-                    <span class="text-[11px] text-slate-500 mt-1 block">Carburant, Repas, Péage...</span>
-                </div>
-
-                <!-- Versements Propriétaire -->
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 relative overflow-hidden group">
-                    <div
-                        class="absolute -right-2 -bottom-2 w-16 h-16 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition">
-                    </div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Versé au Boss</span>
-                    <div class="text-2xl md:text-3xl font-extrabold text-blue-400 font-mono mt-1" id="kpiVers">0 F</div>
-                    <span class="text-[11px] text-slate-500 mt-1 block">Rendu au propriétaire</span>
-                </div>
-
-                <!-- Bénéfice Net -->
+    <!-- En-tête / Logo Voiture Réaliste et Professionnelle de face -->
+    <header class="bg-slate-900/95 border-b border-amber-500/20 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3.5">
                 <div
-                    class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-4 relative overflow-hidden glow-gold">
-                    <div class="absolute -right-2 -bottom-2 w-16 h-16 bg-amber-500/10 rounded-full blur-xl"></div>
-                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">Reste Net
-                        (Poche)</span>
-                    <div class="text-2xl md:text-3xl font-extrabold text-amber-400 font-mono mt-1" id="kpiNet">0 F</div>
-                    <span class="text-[11px] text-amber-500/80 mt-1 block font-medium">Gains − Dépenses − Versé</span>
-                </div>
-            </div>
-
-            <!-- ========================================================================= -->
-            <!-- MODE CHAUFFEUR DASHBOARD -->
-            <!-- ========================================================================= -->
-            <div id="viewDriver" class="space-y-6">
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                    <!-- Left Column (7 cols): Caisse, Courses & Quick add -->
-                    <div class="lg:col-span-7 space-y-6">
-
-                        <!-- Quick Ride Addition Card -->
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                                <h2 class="font-extrabold text-base flex items-center gap-2 text-white">
-                                    <span>💰</span> Caisse & Enregistrement Rapide
-                                </h2>
-                                <span
-                                    class="text-xs text-amber-400 font-mono bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20"
-                                    id="avgRide">
-                                    Moyenne: 0 FCFA
-                                </span>
-                            </div>
-
-                            <!-- Input course direct -->
-                            <div class="flex gap-2">
-                                <input id="inputRideAmt" type="number" inputmode="numeric"
-                                    placeholder="Montant de la course (ex: 2000)"
-                                    class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-mono placeholder:text-slate-500 focus:outline-none focus:border-amber-500 text-lg">
-                                <button onclick="addRideFromInput()"
-                                    class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-6 rounded-xl transition flex items-center gap-2 active:scale-95 shadow-lg shadow-amber-500/20">
-                                    <span>+</span> Ajouter
-                                </button>
-                            </div>
-
-                            <!-- Quick buttons -->
-                            <div>
-                                <span class="text-xs text-slate-400 font-semibold block mb-2">Montants rapides ou
-                                    multiples du tarif habituel :</span>
-                                <div id="quickChips" class="flex flex-wrap gap-2"></div>
-                            </div>
-
-                            <!-- Verser au boss action -->
-                            <div class="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row gap-2 items-center">
-                                <div class="flex-1 w-full flex gap-2">
-                                    <input id="inputVerAmt" type="number" inputmode="numeric"
-                                        placeholder="Montant du versement au boss"
-                                        class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono placeholder:text-slate-500 focus:outline-none focus:border-blue-500">
-                                    <button onclick="addVersement()"
-                                        class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-xl text-sm transition">
-                                        Verser
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- List of today's rides & transactions -->
-                            <div class="pt-2">
-                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Historique de
-                                    la journée</h3>
-                                <ul id="ridesList" class="space-y-2 max-h-56 overflow-y-auto pr-1"></ul>
-                            </div>
-                        </div>
-
-                        <!-- Inter-City Trip & GPS Route Calculator -->
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                                <h2 class="font-extrabold text-base flex items-center gap-2 text-white">
-                                    <span>🛣️</span> Calculateur de Trajets & Lignes Sénégal
-                                </h2>
-                                <span class="text-xs text-slate-400">Thiès / Dakar / Mbour</span>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs font-bold text-slate-400 block mb-1">Trajet Régulier :</label>
-                                    <select id="selectRoute" onchange="applyPresetRoute()"
-                                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-                                        <option value="">-- Choisir un trajet prédéfini --</option>
-                                        <option value="thies_dakar">Thiès ⇄ Dakar (Aéroport / Centre)</option>
-                                        <option value="thies_mbour">Thiès ⇄ Mbour / Saly</option>
-                                        <option value="thies_touba">Thiès ⇄ Touba / Diourbel</option>
-                                        <option value="thies_stlouis">Thiès ⇄ Saint-Louis</option>
-                                        <option value="dakar_mbour">Dakar ⇄ Mbour / AIBD</option>
-                                        <option value="urban_thies">Course Urbaine Thiès Intramuros</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label class="text-xs font-bold text-slate-400 block mb-1">Nombre de Passagers /
-                                        Place :</label>
-                                    <input id="routePassengers" type="number" value="1" min="1" max="15"
-                                        onchange="calculateRouteCost()" oninput="calculateRouteCost()"
-                                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-500">
-                                </div>
-                            </div>
-
-                            <!-- Route Estimate Display Box -->
-                            <div
-                                class="bg-slate-950 rounded-xl p-4 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                                <div>
-                                    <span class="text-xs text-slate-400 block">Tarif Conseillé Suggéré</span>
-                                    <div class="text-xl font-black text-amber-400 font-mono" id="routeTotalEst">0 FCFA
-                                    </div>
-                                    <span class="text-[11px] text-slate-500" id="routeDetailSub">Sélectionnez une ligne
-                                        pour calculer</span>
-                                </div>
-                                <button onclick="addCalculatedRouteRide()"
-                                    class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
-                                    ⚡ Encaisser cette course
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Right Column (5 cols): Dépenses, Horloge, Tarif Habituel -->
-                    <div class="lg:col-span-5 space-y-6">
-
-                        <!-- Add Expense Card -->
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                                <h2 class="font-extrabold text-base flex items-center gap-2 text-white">
-                                    <span>⛽</span> Enregistrer une Dépense
-                                </h2>
-                                <span class="text-xs text-rose-400 font-bold" id="totalDepsBadge">0 F</span>
-                            </div>
-
-                            <div class="space-y-3">
-                                <div>
-                                    <input id="inputDepDesc" placeholder="Motif (ex: Carburant 5000L, Lavage, Repas)"
-                                        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-rose-500">
-                                </div>
-                                <div class="flex gap-2">
-                                    <input id="inputDepAmt" type="number" inputmode="numeric"
-                                        placeholder="Montant (FCFA)"
-                                        class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono placeholder:text-slate-500 focus:outline-none focus:border-rose-500">
-                                    <button onclick="addExpense()"
-                                        class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 rounded-xl text-sm transition">
-                                        + Dépense
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="pt-2">
-                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Dépenses de
-                                    la journée</h3>
-                                <ul id="depsList" class="space-y-2 max-h-44 overflow-y-auto pr-1"></ul>
-                            </div>
-                        </div>
-
-                        <!-- Vehicle Type & Standard Rate Card -->
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                            <h2
-                                class="font-extrabold text-base border-b border-slate-800 pb-3 text-white flex items-center gap-2">
-                                <span>🚘</span> Type de Véhicule & Tarif
-                            </h2>
-
-                            <div class="grid grid-cols-2 gap-2" id="vehicleButtons">
-                                <!-- Injected via JS -->
-                            </div>
-
-                            <div class="pt-2 border-t border-slate-800">
-                                <label class="text-xs font-bold text-slate-400 block mb-1">Prix habituel d'une course
-                                    simple (FCFA) :</label>
-                                <div class="flex gap-2">
-                                    <input id="inputBaseRate" type="number" inputmode="numeric" placeholder="ex: 1500"
-                                        class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-500">
-                                    <button onclick="saveBaseRate()"
-                                        class="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-4 rounded-xl text-sm border border-slate-700 transition">
-                                        OK
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-5">
-                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-                        <div>
-                            <h2 class="font-extrabold text-lg flex items-center gap-2 text-white">
-                                <span>🩺</span> Carnet de Santé & Voyants du Véhicule
-                            </h2>
-                            <p class="text-xs text-slate-400">Cliquez sur un voyant pour changer l'état : 🟢 Bon | 🟠 À
-                                vérifier | 🔴 Urgence</p>
-                        </div>
-
-                        <!-- Odometer & Vidange Alert -->
-                        <div class="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
-                            <span class="text-xs text-slate-400 font-bold pl-1">Compteur Km :</span>
-                            <input id="inputKm" type="number" placeholder="125000"
-                                class="w-28 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-mono focus:outline-none focus:border-amber-500">
-                            <button onclick="saveKm()"
-                                class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1 rounded-lg text-xs">
-                                Mettre à jour
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Voyants Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="carCheckGrid">
-                        <!-- Rendered by JS -->
-                    </div>
-
-                    <!-- Notes & Vidange Alert Status -->
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 pt-2">
-                        <div class="md:col-span-8 space-y-2">
-                            <textarea id="carNotes" rows="2"
-                                placeholder="Notes d'entretien (ex: Bruit de frein à l'arrière, vidange prévue à 130 000 km...)"
-                                class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500"></textarea>
-                            <button onclick="saveCarNotes()"
-                                class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 transition">
-                                Sauvegarder les notes
-                            </button>
-                        </div>
-
-                        <div
-                            class="md:col-span-4 bg-slate-950 rounded-xl p-3 border border-slate-800 flex flex-col justify-between">
-                            <span class="text-xs font-bold text-slate-400">Alerte Vidange & Entretien</span>
-                            <div class="text-sm font-bold text-amber-400 mt-1" id="oilAlertStatus">-- km restants avant
-                                vidange</div>
-                            <p class="text-[11px] text-slate-500 mt-1">Calculé automatiquement selon le kilométrage
-                                renseigné.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div>
-                            <h2 class="font-extrabold text-lg flex items-center gap-2 text-white">
-                                <span>📲</span> Terminal de Paiement Client & QR Codes
-                            </h2>
-                            <p class="text-xs text-slate-400">Présentez ou scannez ces QR Codes directement sur le
-                                téléphone du client</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-                        <!-- Orange Money -->
-                        <div
-                            class="bg-slate-950 border-t-4 border-amber-500 border-x border-b border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between text-center space-y-3">
-                            <span class="font-extrabold text-amber-500 text-sm">Orange Money</span>
-                            <div id="qrBoxOM"
-                                class="w-32 h-32 bg-black rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden cursor-pointer"
-                                onclick="openQrModal('om', 'Orange Money')">
-                                <span class="text-xs text-slate-500">Cliquez pour QR</span>
-                            </div>
-                            <input type="file" id="fileOM" accept="image/*" class="hidden"
-                                onchange="uploadQrCode('om', this)">
-                            <button onclick="document.getElementById('fileOM').click()"
-                                class="bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-300 w-full py-2 rounded-xl border border-slate-800 transition">
-                                📷 Importer Image QR
-                            </button>
-                        </div>
-
-                        <!-- Wave -->
-                        <div
-                            class="bg-slate-950 border-t-4 border-cyan-400 border-x border-b border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between text-center space-y-3">
-                            <span class="font-extrabold text-cyan-400 text-sm">Wave Sénégal</span>
-                            <div id="qrBoxWave"
-                                class="w-32 h-32 bg-black rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden cursor-pointer"
-                                onclick="openQrModal('wave', 'Wave Sénégal')">
-                                <span class="text-xs text-slate-500">Cliquez pour QR</span>
-                            </div>
-                            <input type="file" id="fileWave" accept="image/*" class="hidden"
-                                onchange="uploadQrCode('wave', this)">
-                            <button onclick="document.getElementById('fileWave').click()"
-                                class="bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-300 w-full py-2 rounded-xl border border-slate-800 transition">
-                                📷 Importer Image QR
-                            </button>
-                        </div>
-
-                        <!-- Carte Bancaire -->
-                        <div
-                            class="bg-slate-950 border-t-4 border-blue-500 border-x border-b border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between text-center space-y-3">
-                            <span class="font-extrabold text-blue-400 text-sm">Carte Bancaire / TPE</span>
-                            <div id="qrBoxCard"
-                                class="w-32 h-32 bg-black rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden cursor-pointer"
-                                onclick="openQrModal('card', 'Carte Bancaire')">
-                                <span class="text-xs text-slate-500">Cliquez pour QR</span>
-                            </div>
-                            <input type="file" id="fileCard" accept="image/*" class="hidden"
-                                onchange="uploadQrCode('card', this)">
-                            <button onclick="document.getElementById('fileCard').click()"
-                                class="bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-300 w-full py-2 rounded-xl border border-slate-800 transition">
-                                📷 Importer Image QR
-                            </button>
-                        </div>
-
-                        <!-- Autre / Espèces -->
-                        <div
-                            class="bg-slate-950 border-t-4 border-emerald-500 border-x border-b border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-between text-center space-y-3">
-                            <span class="font-extrabold text-emerald-400 text-sm">Autre / Pass / Espèces</span>
-                            <div id="qrBoxOther"
-                                class="w-32 h-32 bg-black rounded-xl border border-slate-800 flex items-center justify-center overflow-hidden cursor-pointer"
-                                onclick="openQrModal('other', 'Autre Moyen')">
-                                <span class="text-xs text-slate-500">Cliquez pour QR</span>
-                            </div>
-                            <input type="file" id="fileOther" accept="image/*" class="hidden"
-                                onchange="uploadQrCode('other', this)">
-                            <button onclick="document.getElementById('fileOther').click()"
-                                class="bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-300 w-full py-2 rounded-xl border border-slate-800 transition">
-                                📷 Importer Image QR
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                        <div>
-                            <h2 class="font-extrabold text-base flex items-center gap-2 text-white">
-                                <span>📍</span> Navigation GPS & Localisation du Client
-                            </h2>
-                            <p class="text-xs text-slate-400">Collez le lien WhatsApp reçu ou l'adresse du client</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="useMyLocation()"
-                                class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 transition">
-                                🎯 Ma Position
-                            </button>
-                            <button onclick="clearMap()" id="btnClearMap"
-                                class="hidden bg-rose-500/10 text-rose-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-rose-500/20 transition">
-                                Effacer
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <input id="inputLoc"
-                            placeholder="Collez ici le lien Google Maps, coordonnées ou nom de quartier (ex: Thiès Dixième)"
-                            class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500">
-                        <button onclick="loadClientLocation()"
-                            class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-5 rounded-xl text-sm transition">
-                            OK
-                        </button>
-                    </div>
-
-                    <div id="locStatusMsg" class="text-xs text-slate-400">Exemple : « 14.7833, -16.9167 » ou un lien
-                        WhatsApp Maps.</div>
-
-                    <!-- Map Container Frame -->
+                    class="relative bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 p-0.5 rounded-2xl shadow-lg shadow-amber-500/20">
                     <div
-                        class="w-full h-72 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden relative flex items-center justify-center text-slate-500 text-sm">
-                        <div id="mapFrameContainer" class="w-full h-full flex items-center justify-center">
-                            <span>La carte interactive s'affichera ici après avoir validé un lieu.</span>
-                        </div>
-                    </div>
-
-                    <div id="mapActions" class="hidden flex gap-2">
-                        <a id="btnExternalRoute" target="_blank" rel="noopener"
-                            class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
-                            🗺️ Lancer le Guidage GPS (Google Maps)
-                        </a>
+                        class="bg-slate-950 h-12 w-12 flex items-center justify-center rounded-2xl overflow-hidden relative">
+                        <!-- Image réaliste et professionnelle de voiture de face -->
+                        <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=150&q=80"
+                            alt="Voiture Karim Travel" class="h-full w-full object-cover">
                     </div>
                 </div>
-
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 class="font-extrabold text-base flex items-center gap-2 text-white">
-                            <span>📞</span> Numéros Utiles & Urgences Sénégal
-                        </h2>
-                        <button onclick="addNewContact()"
-                            class="bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-700 transition">
-                            + Ajouter un contact
-                        </button>
-                    </div>
-
-                    <div id="contactsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        <!-- Rendered by JS -->
-                    </div>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wide uppercase text-white flex items-center gap-2">
+                        Karim Travel <span
+                            class="bg-amber-500/10 text-amber-400 text-[10px] px-2.5 py-0.5 rounded-full border border-amber-500/30 font-semibold">PRO
+                            SUITE</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Agence de Transport Officielle • 14 Régions</p>
                 </div>
+            </div>
+            <div
+                class="hidden md:flex items-center space-x-6 text-xs font-bold text-slate-300 uppercase tracking-wider">
+                <span class="hover:text-amber-400 transition cursor-pointer">Accueil</span>
+                <span class="hover:text-amber-400 transition cursor-pointer">Flotte</span>
+                <a href="#booking-section"
+                    class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 px-5 py-2.5 rounded-xl transition font-black shadow-lg shadow-amber-500/20">Réserver</a>
+            </div>
+        </div>
+    </header>
 
+    <!-- Contenu Principal / Formulaire Complet -->
+    <main id="booking-section" class="max-w-3xl w-full mx-auto px-4 py-10 my-auto">
+        <div class="glass-pro rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+            <div class="absolute -top-32 -right-32 w-56 h-56 bg-amber-500/10 rounded-full blur-3xl pointer-events-none">
             </div>
 
-            <!-- ========================================================================= -->
-            <!-- MODE BOSS / PROPRIÉTAIRE DASHBOARD -->
-            <!-- ========================================================================= -->
-            <div id="viewBoss" class="hidden space-y-6">
+            <div class="text-center mb-8">
+                <span
+                    class="text-amber-400 text-xs font-bold uppercase tracking-widest bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/30">Formulaire
+                    Détaillé de Réservation</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-white mt-3">Planifiez Votre Trajet sur Mesure</h2>
+                <p class="text-slate-400 text-sm mt-1">Précisez votre lieu de départ, votre destination et vos options
+                    pour une prise en charge immédiate via WhatsApp.</p>
+            </div>
 
-                <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 shadow-2xl space-y-6">
-                    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <form id="booking-form" class="space-y-6">
+                <!-- 1. Informations Personnelles & Photo -->
+                <div
+                    class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                    <div class="md:col-span-2 space-y-4">
                         <div>
-                            <h2 class="font-extrabold text-xl text-amber-400 flex items-center gap-2">
-                                <span>👑</span> Tableau de Bord Proprietaire - Suivi de Flotte
-                            </h2>
-                            <p class="text-xs text-slate-400">Contrôle des versements, rentabilité et dépenses du
-                                chauffeur</p>
+                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">Nom
+                                Complet</label>
+                            <input type="text" id="client-name" required placeholder="Ex: Moussa Diop"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-amber-500">
                         </div>
-
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-400">Objectif Versement Jour :</span>
-                            <input id="bossTargetInput" type="number" value="15000"
-                                class="w-28 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-xs text-amber-400 font-mono text-center font-bold"
-                                onchange="updateBossTarget()">
-                            <span class="text-xs text-slate-400">FCFA</span>
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">Téléphone
+                                (WhatsApp)</label>
+                            <input type="tel" id="client-phone" required placeholder="Ex: +221 77 000 00 00"
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-amber-500">
                         </div>
                     </div>
-
-                    <!-- Progression bar vs target -->
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                        <div class="flex justify-between text-xs font-bold">
-                            <span class="text-slate-300">Progression du Versement :</span>
-                            <span id="bossTargetPercent" class="text-amber-400 font-mono">0%</span>
+                    <!-- Espace pour ajouter une photo -->
+                    <div
+                        class="flex flex-col items-center justify-center border-2 border-dashed border-slate-700 rounded-xl p-4 text-center hover:border-amber-500 transition cursor-pointer relative">
+                        <input type="file" id="client-photo" accept="image/*"
+                            class="absolute inset-0 opacity-0 cursor-pointer">
+                        <div id="photo-preview-text" class="text-xs text-slate-400">
+                            <span class="text-2xl block mb-1">📷</span>
+                            Ajouter votre photo ou image
                         </div>
-                        <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-800">
-                            <div id="bossProgressBar"
-                                class="h-full bg-gradient-to-r from-amber-500 to-emerald-400 rounded-full transition-all duration-500"
-                                style="width: 0%"></div>
-                        </div>
+                        <img id="photo-preview" class="hidden h-16 w-16 object-cover rounded-full shadow-md mt-1"
+                            alt="Aperçu">
                     </div>
-
-                    <!-- Boss Financial Analysis Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <span class="text-xs text-slate-400 uppercase font-bold">Total Encaissé par le
-                                Chauffeur</span>
-                            <div class="text-2xl font-black text-emerald-400 font-mono" id="bossTotalEncaisse">0 FCFA
-                            </div>
-                            <p class="text-[11px] text-slate-500">Chiffre d'affaires brut généré aujourd'hui</p>
-                        </div>
-
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <span class="text-xs text-slate-400 uppercase font-bold">Montant Réellement Versé</span>
-                            <div class="text-2xl font-black text-blue-400 font-mono" id="bossTotalVerse">0 FCFA</div>
-                            <p class="text-[11px] text-slate-500">Arrivé dans votre caisse propriétaire</p>
-                        </div>
-
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                            <span class="text-xs text-slate-400 uppercase font-bold">Dépenses Véhicule Déduites</span>
-                            <div class="text-2xl font-black text-rose-400 font-mono" id="bossTotalExpenses">0 FCFA</div>
-                            <p class="text-[11px] text-slate-500">Essence, entretien et frais déclarés</p>
-                        </div>
-
-                    </div>
-
-                    <!-- Audit Log Table for Boss -->
-                    <div class="space-y-3 pt-2">
-                        <h3 class="font-extrabold text-sm text-slate-200">Relevé de Clôture & Audit des Versements</h3>
-                        <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-                                    <tr>
-                                        <th class="p-3">Heure</th>
-                                        <th class="p-3">Type</th>
-                                        <th class="p-3">Détail / Motif</th>
-                                        <th class="p-3 text-right">Montant</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="bossAuditTable" class="divide-y divide-slate-800/50">
-                                    <!-- Injected via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Backup & Restore Data section -->
-                    <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                        <div class="text-xs text-slate-400">
-                            Sauvegardez vos données localement ou transférez le journal sur un autre téléphone.
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="exportDataJSON()"
-                                class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-2 rounded-xl text-xs border border-slate-700 transition">
-                                📥 Importer / Exporter JSON
-                            </button>
-                        </div>
-                    </div>
-
                 </div>
 
-            </div>
+                <!-- 2. Localisation : Départ et Arrivée (Régions & Quartiers) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Lieu de départ -->
+                    <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-widest">📍 Lieu de Départ</h3>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Région de Départ</label>
+                            <select id="depart-region" required
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500">
+                                <option value="">-- Choisissez la région --</option>
+                                <option value="Dakar">Dakar</option>
+                                <option value="Thiès">Thiès</option>
+                                <option value="Ziguinchor">Ziguinchor</option>
+                                <option value="Saint-Louis">Saint-Louis</option>
+                                <option value="Diourbel">Diourbel</option>
+                                <option value="Louga">Louga</option>
+                                <option value="Fatick">Fatick</option>
+                                <option value="Kaolack">Kaolack</option>
+                                <option value="Kaffrine">Kaffrine</option>
+                                <option value="Kédougou">Kédougou</option>
+                                <option value="Kolda">Kolda</option>
+                                <option value="Matam">Matam</option>
+                                <option value="Sédhiou">Sédhiou</option>
+                                <option value="Tambacounda">Tambacounda</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Quartier / Adresse
+                                précise</label>
+                            <input type="text" id="depart-quartier" required
+                                placeholder="Ex: Grand Standing, Medina Fall..."
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
 
-        </main>
+                    <!-- Lieu d'arrivée -->
+                    <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-widest">🏁 Destination (Arrivée)
+                        </h3>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Région d'Arrivée</label>
+                            <select id="arrivee-region" required
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500">
+                                <option value="">-- Choisissez la région --</option>
+                                <option value="Dakar">Dakar</option>
+                                <option value="Thiès">Thiès</option>
+                                <option value="Ziguinchor">Ziguinchor</option>
+                                <option value="Saint-Louis">Saint-Louis</option>
+                                <option value="Diourbel">Diourbel</option>
+                                <option value="Louga">Louga</option>
+                                <option value="Fatick">Fatick</option>
+                                <option value="Kaolack">Kaolack</option>
+                                <option value="Kaffrine">Kaffrine</option>
+                                <option value="Kédougou">Kédougou</option>
+                                <option value="Kolda">Kolda</option>
+                                <option value="Matam">Matam</option>
+                                <option value="Sédhiou">Sédhiou</option>
+                                <option value="Tambacounda">Tambacounda</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Quartier / Point de
+                                chute</label>
+                            <input type="text" id="arrivee-quartier" required placeholder="Ex: Plateau, Liberté 6..."
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+                </div>
 
-        <footer class="bg-slate-950 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
-            Karim Travel Pro &copy; 2026 - Plateforme de Gestion de Transport Professionnel Sénégal.
-        </footer>
+                <!-- 3. Cases à cocher pour les options et types de véhicules -->
+                <div>
+                    <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Options et Type
+                        de Véhicule</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <label
+                            class="flex items-center space-x-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl cursor-pointer hover:border-amber-500 transition">
+                            <input type="radio" name="vehicle-option" value="Berline / Taxi" checked
+                                class="text-amber-500 bg-slate-900">
+                            <span class="text-xs font-medium text-slate-200">🚗 Berline / Taxi</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl cursor-pointer hover:border-amber-500 transition">
+                            <input type="radio" name="vehicle-option" value="Minibus"
+                                class="text-amber-500 bg-slate-900">
+                            <span class="text-xs font-medium text-slate-200">🚐 Minibus</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl cursor-pointer hover:border-amber-500 transition">
+                            <input type="radio" name="vehicle-option" value="Grand Bus"
+                                class="text-amber-500 bg-slate-900">
+                            <span class="text-xs font-medium text-slate-200">🚌 Grand Bus</span>
+                        </label>
+                        <label
+                            class="flex items-center space-x-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl cursor-pointer hover:border-amber-500 transition">
+                            <input type="radio" name="vehicle-option" value="Pick-up / Camion"
+                                class="text-amber-500 bg-slate-900">
+                            <span class="text-xs font-medium text-slate-200">🚙 Pick-up / Colis</span>
+                        </label>
+                    </div>
+                </div>
 
-    </div>
+                <!-- Boutons d'Action (Tous deux redirigent vers WhatsApp) -->
+                <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-4 px-6 rounded-xl shadow-lg shadow-amber-500/20 transition duration-200 text-center flex items-center justify-center space-x-2">
+                        <span>🚀 Envoyer la Réservation sur WhatsApp</span>
+                    </button>
+                    <button type="button" id="whatsapp-btn"
+                        class="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 px-6 rounded-xl shadow-lg shadow-emerald-600/20 transition duration-200 flex items-center justify-center space-x-2">
+                        <span>💬 Contact WhatsApp Direct</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
 
-    <!-- QR DISPLAY MODAL -->
-    <div id="qrModal"
-        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div
-            class="bg-slate-900 border border-slate-700 rounded-3xl p-6 max-w-sm w-full space-y-4 text-center shadow-2xl">
-            <h3 id="qrModalTitle" class="font-extrabold text-lg text-amber-400">Paiement QR Code</h3>
-            <div id="qrModalBody"
-                class="w-64 h-64 mx-auto bg-black rounded-2xl border border-slate-800 flex items-center justify-center overflow-hidden">
-                <!-- Enlarged Image -->
-            </div>
-            <p class="text-xs text-slate-400">Scannez ce QR Code à l'aide de votre application mobile.</p>
-            <button onclick="closeQrModal()"
-                class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl text-sm border border-slate-700 transition">
-                Fermer
-            </button>
+    <!-- Animation route et véhicule -->
+    <div class="relative overflow-hidden h-20 bg-slate-900 border-t border-amber-500/20 flex items-center">
+        <div class="absolute w-full border-t border-dashed border-amber-500/30 top-1/2"></div>
+        <div class="absolute car-animation flex items-center space-x-3 z-10">
+            <span
+                class="text-xs font-bold text-amber-400 bg-slate-950/90 px-3 py-1.5 rounded-lg border border-amber-500/40 shadow-xl">Karim
+                Travel • Sécurité & Confort 🚐</span>
+            <div class="text-3xl filter drop-shadow-md">🚙</div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <!-- Script de gestion de la redirection WhatsApp -->
     <script>
+        const photoInput = document.getElementById('client-photo');
+        const photoPreview = document.getElementById('photo-preview');
+        const photoPreviewText = document.getElementById('photo-preview-text');
 
-        // Web Audio Sound Generator for tactile audio feedback
-        const soundFx = {
-            playBeep: function (freq = 587, type = 'sine', duration = 0.1) {
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + duration);
-                } catch (e) { }
-            },
-            addRideSound: function () { this.playBeep(880, 'triangle', 0.15); },
-            addExpenseSound: function () { this.playBeep(330, 'sawtooth', 0.2); },
-            clickSound: function () { this.playBeep(440, 'sine', 0.05); }
-        };
-
-        // State Constants & LocalStorage Key
-        const STORAGE_KEY = 'karimTravel_ProSuite_v3';
-
-        // Default Application State
-        const DEFAULT_STATE = {
-            mode: 'driver', // 'driver' or 'boss'
-            baseRate: 1500,
-            vehicle: 'Berline',
-            targetBoss: 15000,
-            rides: [], // { id, amount, label, timestamp }
-            expenses: [], // { id, amount, desc, timestamp }
-            versements: [], // { id, amount, timestamp }
-            qr: {
-                om: '',
-                wave: '',
-                card: '',
-                other: ''
-            },
-            car: {
-                km: 125000,
-                lastOilKm: 120000,
-                notes: '',
-                checks: {
-                    oil: 'ok',
-                    water: 'ok',
-                    brakes: 'ok',
-                    engine: 'ok',
-                    battery: 'ok',
-                    tires: 'ok'
-                }
-            },
-            contacts: [
-                { name: 'Police Secours', phone: '17', isUrgent: true },
-                { name: 'Sapeurs-Pompiers', phone: '18', isUrgent: true },
-                { name: 'Ambulance / SAMU', phone: '15', isUrgent: true },
-                { name: 'Mon Numéro Chauffeur', phone: '77 000 00 00', isUrgent: false },
-                { name: 'Mécanicien Thiès', phone: '78 000 00 00', isUrgent: false },
-                { name: 'Propriétaire Véhicule (Boss)', phone: '76 000 00 00', isUrgent: false }
-            ],
-            location: null
-        };
-
-        let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-
-        function loadState() {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    state = Object.assign({}, DEFAULT_STATE, parsed);
-                    if (!state.car) state.car = JSON.parse(JSON.stringify(DEFAULT_STATE.car));
-                    if (!state.qr) state.qr = JSON.parse(JSON.stringify(DEFAULT_STATE.qr));
-                }
-            } catch (e) {
-                console.error('Error loading state:', e);
-            }
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            } catch (e) {
-                console.error('Error saving state:', e);
-            }
-        }
-
-        function formatCurrency(num) {
-            return Math.round(num || 0).toLocaleString('fr-FR') + ' F';
-        }
-
-        function formatTime(ts) {
-            return new Date(ts).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        function switchMode(newMode) {
-            soundFx.clickSound();
-            state.mode = newMode;
-            saveState();
-
-            const btnDriver = document.getElementById('btnModeDriver');
-            const btnBoss = document.getElementById('btnModeBoss');
-            const viewDriver = document.getElementById('viewDriver');
-            const viewBoss = document.getElementById('viewBoss');
-
-            if (newMode === 'driver') {
-                btnDriver.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md';
-                btnBoss.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white';
-                viewDriver.classList.remove('hidden');
-                viewBoss.classList.add('hidden');
-            } else {
-                btnBoss.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md';
-                btnDriver.className = 'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white';
-                viewBoss.classList.remove('hidden');
-                viewDriver.classList.add('hidden');
-            }
-            render();
-        }
-
-        function render() {
-            // 1. Calculate Totals
-            const totalGains = state.rides.reduce((acc, r) => acc + r.amount, 0);
-            const totalDeps = state.expenses.reduce((acc, r) => acc + r.amount, 0);
-            const totalVers = state.versements.reduce((acc, r) => acc + r.amount, 0);
-            const netProfit = totalGains - totalDeps - totalVers;
-
-            // 2. Update KPI Displays
-            document.getElementById('kpiGains').textContent = formatCurrency(totalGains);
-            document.getElementById('kpiCountRides').textContent = state.rides.length;
-            document.getElementById('kpiDeps').textContent = formatCurrency(totalDeps);
-            document.getElementById('kpiVers').textContent = formatCurrency(totalVers);
-
-            const kpiNetEl = document.getElementById('kpiNet');
-            kpiNetEl.textContent = formatCurrency(netProfit);
-            if (netProfit < 0) {
-                kpiNetEl.className = 'text-2xl md:text-3xl font-extrabold text-rose-400 font-mono mt-1';
-            } else {
-                kpiNetEl.className = 'text-2xl md:text-3xl font-extrabold text-amber-400 font-mono mt-1';
-            }
-
-            document.getElementById('totalDepsBadge').textContent = formatCurrency(totalDeps);
-
-            const avg = state.rides.length > 0 ? (totalGains / state.rides.length) : 0;
-            document.getElementById('avgRide').textContent = 'Moyenne: ' + formatCurrency(avg);
-
-            // 3. Render Quick Add Chips
-            renderQuickChips();
-
-            // 4. Render Transaction History (Driver)
-            renderRidesList();
-            renderDepsList();
-
-            // 5. Render Vehicles
-            renderVehicleSelector();
-
-            // 6. Render Car Checks & Health
-            renderCarHealth();
-
-            // 7. Render QR Boxes
-            renderQrBoxes();
-
-            // 8. Render Contacts
-            renderContacts();
-
-            // 9. Boss Dashboard Updates
-            renderBossDashboard(totalGains, totalVers, totalDeps);
-        }
-
-        function renderQuickChips() {
-            const container = document.getElementById('quickChips');
-            const base = state.baseRate > 0 ? state.baseRate : 1500;
-            const multipliers = [base, base * 2, 500, 1000, 2000, 5000];
-            const uniqueVals = [...new Set(multipliers)];
-
-            container.innerHTML = uniqueVals.map(val => `
-        <button onclick="addRideAmount(${val})" class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs transition active:scale-95">
-          + ${formatCurrency(val)}
-        </button>
-      `).join('');
-        }
-
-        function addRideAmount(amt, label = 'Course Rapide') {
-            if (!amt || amt <= 0) return;
-            soundFx.addRideSound();
-            state.rides.push({
-                id: Date.now(),
-                amount: Number(amt),
-                label: label,
-                timestamp: Date.now()
-            });
-            saveState();
-            render();
-        }
-
-        function addRideFromInput() {
-            const input = document.getElementById('inputRideAmt');
-            const val = Number(input.value);
-            if (val > 0) {
-                addRideAmount(val, 'Course Manuel');
-                input.value = '';
-            }
-        }
-
-        function addVersement() {
-            const input = document.getElementById('inputVerAmt');
-            const val = Number(input.value);
-            if (val > 0) {
-                soundFx.clickSound();
-                state.versements.push({
-                    id: Date.now(),
-                    amount: val,
-                    timestamp: Date.now()
-                });
-                saveState();
-                input.value = '';
-                render();
-            }
-        }
-
-        function addExpense() {
-            const descInput = document.getElementById('inputDepDesc');
-            const amtInput = document.getElementById('inputDepAmt');
-            const amt = Number(amtInput.value);
-            const desc = descInput.value.trim() || 'Dépense carburant/autre';
-
-            if (amt > 0) {
-                soundFx.addExpenseSound();
-                state.expenses.push({
-                    id: Date.now(),
-                    amount: amt,
-                    desc: desc,
-                    timestamp: Date.now()
-                });
-                saveState();
-                amtInput.value = '';
-                descInput.value = '';
-                render();
-            }
-        }
-
-        function deleteItem(type, id) {
-            soundFx.clickSound();
-            if (type === 'ride') {
-                state.rides = state.rides.filter(r => r.id !== id);
-            } else if (type === 'expense') {
-                state.expenses = state.expenses.filter(e => e.id !== id);
-            } else if (type === 'versement') {
-                state.versements = state.versements.filter(v => v.id !== id);
-            }
-            saveState();
-            render();
-        }
-
-        function renderRidesList() {
-            const container = document.getElementById('ridesList');
-            const allRides = state.rides.map(r => ({ ...r, itemType: 'ride' }))
-                .concat(state.versements.map(v => ({ ...v, amount: v.amount, label: 'Versement Boss', itemType: 'versement' })))
-                .sort((a, b) => b.timestamp - a.timestamp);
-
-            if (allRides.length === 0) {
-                container.innerHTML = `<li class="text-xs text-slate-500 py-3 text-center border border-dashed border-slate-800 rounded-xl">Aucune course enregistrée aujourd'hui.</li>`;
-                return;
-            }
-
-            container.innerHTML = allRides.map(item => `
-        <li class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-xs">
-          <div class="flex items-center gap-2">
-            <span class="text-slate-500 font-mono text-[10px]">${formatTime(item.timestamp)}</span>
-            <span class="${item.itemType === 'versement' ? 'text-blue-400 font-bold' : 'text-slate-200'}">${item.label || 'Course'}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-mono font-bold ${item.itemType === 'versement' ? 'text-blue-400' : 'text-emerald-400'}">${formatCurrency(item.amount)}</span>
-            <button onclick="deleteItem('${item.itemType}', ${item.id})" class="text-rose-500 hover:text-rose-400 px-1.5 py-0.5 rounded border border-slate-800 hover:border-rose-500/30">×</button>
-          </div>
-        </li>
-      `).join('');
-        }
-
-        function renderDepsList() {
-            const container = document.getElementById('depsList');
-            if (state.expenses.length === 0) {
-                container.innerHTML = `<li class="text-xs text-slate-500 py-3 text-center border border-dashed border-slate-800 rounded-xl">Aucune dépense enregistrée.</li>`;
-                return;
-            }
-
-            container.innerHTML = state.expenses.slice().reverse().map(exp => `
-        <li class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-xs">
-          <div class="flex items-center gap-2">
-            <span class="text-slate-500 font-mono text-[10px]">${formatTime(exp.timestamp)}</span>
-            <span class="text-slate-300">${exp.desc}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-mono font-bold text-rose-400">-${formatCurrency(exp.amount)}</span>
-            <button onclick="deleteItem('expense', ${exp.id})" class="text-rose-500 hover:text-rose-400 px-1.5 py-0.5 rounded border border-slate-800 hover:border-rose-500/30">×</button>
-          </div>
-        </li>
-      `).join('');
-        }
-
-        const VEHICLES = [
-            { name: 'Berline', icon: '🚗' },
-            { name: 'Minibus', icon: '🚐' },
-            { name: 'Bus', icon: '🚌' },
-            { name: 'Camion', icon: '🚚' }
-        ];
-
-        function renderVehicleSelector() {
-            const container = document.getElementById('vehicleButtons');
-            container.innerHTML = VEHICLES.map(v => {
-                const active = state.vehicle === v.name;
-                return `
-          <button onclick="setVehicle('${v.name}')" class="flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-bold transition ${active ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'}">
-            <span class="text-2xl mb-1">${v.icon}</span>
-            <span>${v.name}</span>
-          </button>
-        `;
-            }).join('');
-
-            document.getElementById('inputBaseRate').value = state.baseRate || '';
-        }
-
-        function setVehicle(vName) {
-            soundFx.clickSound();
-            state.vehicle = vName;
-            saveState();
-            renderVehicleSelector();
-        }
-
-        function saveBaseRate() {
-            const val = Number(document.getElementById('inputBaseRate').value);
-            if (val >= 0) {
-                state.baseRate = val;
-                saveState();
-                renderQuickChips();
-            }
-        }
-
-        const ROUTE_PRESETS = {
-            'thies_dakar': { name: 'Thiès ⇄ Dakar', km: 70, basePrice: 3000 },
-            'thies_mbour': { name: 'Thiès ⇄ Mbour / Saly', km: 55, basePrice: 2500 },
-            'thies_touba': { name: 'Thiès ⇄ Touba', km: 130, basePrice: 4000 },
-            'thies_stlouis': { name: 'Thiès ⇄ Saint-Louis', km: 190, basePrice: 6000 },
-            'dakar_mbour': { name: 'Dakar ⇄ Mbour / AIBD', km: 80, basePrice: 3500 },
-            'urban_thies': { name: 'Urbain Thiès', km: 10, basePrice: 1500 }
-        };
-
-        let calculatedCurrentRouteFare = 0;
-
-        function applyPresetRoute() {
-            calculateRouteCost();
-        }
-
-        function calculateRouteCost() {
-            const routeKey = document.getElementById('selectRoute').value;
-            const passCount = Math.max(1, Number(document.getElementById('routePassengers').value) || 1);
-
-            if (!routeKey || !ROUTE_PRESETS[routeKey]) {
-                document.getElementById('routeTotalEst').textContent = '0 FCFA';
-                document.getElementById('routeDetailSub').textContent = 'Sélectionnez une ligne pour calculer';
-                calculatedCurrentRouteFare = 0;
-                return;
-            }
-
-            const preset = ROUTE_PRESETS[routeKey];
-            calculatedCurrentRouteFare = preset.basePrice * passCount;
-
-            document.getElementById('routeTotalEst').textContent = formatCurrency(calculatedCurrentRouteFare);
-            document.getElementById('routeDetailSub').textContent = `${preset.name} (${preset.km} km env.) — ${passCount} place(s) x ${formatCurrency(preset.basePrice)}`;
-        }
-
-        function addCalculatedRouteRide() {
-            if (calculatedCurrentRouteFare > 0) {
-                const routeKey = document.getElementById('selectRoute').value;
-                const presetName = ROUTE_PRESETS[routeKey] ? ROUTE_PRESETS[routeKey].name : 'Trajet';
-                addRideAmount(calculatedCurrentRouteFare, `Ligne: ${presetName}`);
-            }
-        }
-
-        const CAR_CHECKS = [
-            { id: 'oil', label: '🛢️ Huile Moteur' },
-            { id: 'water', label: '🌡️ Eau / Radiateur' },
-            { id: 'brakes', label: '🛑 Système Freins' },
-            { id: 'engine', label: '⚠️ Voyant Moteur' },
-            { id: 'battery', label: '🔋 Batterie' },
-            { id: 'tires', label: '🛞 Pression Pneus' }
-        ];
-
-        function renderCarHealth() {
-            const container = document.getElementById('carCheckGrid');
-            container.innerHTML = CAR_CHECKS.map(chk => {
-                const status = state.car.checks[chk.id] || 'ok';
-                let badgeClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 status-ok';
-                let labelText = '🟢 Bon';
-
-                if (status === 'warn') {
-                    badgeClass = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-                    labelText = '🟠 À vérifier';
-                } else if (status === 'bad') {
-                    badgeClass = 'bg-rose-500/10 text-rose-400 border-rose-500/30 status-bad';
-                    labelText = '🔴 Danger';
-                }
-
-                return `
-          <button onclick="toggleCarCheck('${chk.id}')" class="flex flex-col justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 text-left hover:border-slate-700 transition space-y-2">
-            <span class="text-xs font-bold text-slate-300 block">${chk.label}</span>
-            <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg border inline-block ${badgeClass}">
-              ${labelText}
-            </span>
-          </button>
-        `;
-            }).join('');
-
-            document.getElementById('inputKm').value = state.car.km || 125000;
-            document.getElementById('carNotes').value = state.car.notes || '';
-
-            // Calculate Vidange countdown (assuming vidange every 5000 km)
-            const km = Number(state.car.km) || 0;
-            const lastOil = Number(state.car.lastOilKm) || 0;
-            const nextOilDue = lastOil + 5000;
-            const remaining = nextOilDue - km;
-
-            const alertEl = document.getElementById('oilAlertStatus');
-            if (remaining <= 0) {
-                alertEl.textContent = '🚨 Vidange dépassée ! Effectuer la vidange d\'urgence.';
-                alertEl.className = 'text-sm font-bold text-rose-400 mt-1';
-            } else {
-                alertEl.textContent = `🔧 Prochaine vidange dans ${remaining.toLocaleString('fr-FR')} km`;
-                alertEl.className = 'text-sm font-bold text-amber-400 mt-1';
-            }
-        }
-
-        function toggleCarCheck(id) {
-            soundFx.clickSound();
-            const current = state.car.checks[id] || 'ok';
-            const nextMap = { ok: 'warn', warn: 'bad', bad: 'ok' };
-            state.car.checks[id] = nextMap[current];
-            saveState();
-            renderCarHealth();
-        }
-
-        function saveKm() {
-            const val = Number(document.getElementById('inputKm').value);
-            if (val > 0) {
-                state.car.km = val;
-                saveState();
-                renderCarHealth();
-            }
-        }
-
-        function saveCarNotes() {
-            state.car.notes = document.getElementById('carNotes').value;
-            saveState();
-            alert('Notes d\'entretien sauvegardées !');
-        }
-
-        function renderQrBoxes() {
-            const keys = ['om', 'wave', 'card', 'other'];
-            const boxIds = ['qrBoxOM', 'qrBoxWave', 'qrBoxCard', 'qrBoxOther'];
-
-            keys.forEach((key, idx) => {
-                const box = document.getElementById(boxIds[idx]);
-                if (state.qr[key]) {
-                    box.innerHTML = `<img src="${state.qr[key]}" class="w-full h-full object-contain" alt="QR Code">`;
-                } else {
-                    box.innerHTML = `<span class="text-xs text-slate-500">Cliquez pour QR</span>`;
-                }
-            });
-        }
-
-        function uploadQrCode(key, input) {
-            const file = input.files[0];
+        photoInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function (e) {
-                    state.qr[key] = e.target.result;
-                    saveState();
-                    renderQrBoxes();
+                reader.onload = function (event) {
+                    photoPreview.src = event.target.result;
+                    photoPreview.classList.remove('hidden');
+                    photoPreviewText.classList.add('hidden');
                 };
                 reader.readAsDataURL(file);
             }
-        }
+        });
 
-        function openQrModal(key, title) {
-            const modal = document.getElementById('qrModal');
-            const modalTitle = document.getElementById('qrModalTitle');
-            const modalBody = document.getElementById('qrModalBody');
+        const form = document.getElementById('booking-form');
+        const whatsappBtn = document.getElementById('whatsapp-btn');
 
-            modalTitle.textContent = title;
-            if (state.qr[key]) {
-                modalBody.innerHTML = `<img src="${state.qr[key]}" class="w-full h-full object-contain" alt="QR Code Enlarged">`;
-            } else {
-                modalBody.innerHTML = `<span class="text-xs text-slate-500 p-4">Aucun QR Code importé pour cette caisse. Utilisez le bouton "Importer Image QR".</span>`;
-            }
+        function sendToWhatsApp() {
+            const name = document.getElementById('client-name').value;
+            const phone = document.getElementById('client-phone').value;
+            const departRegion = document.getElementById('depart-region').value;
+            const departQuartier = document.getElementById('depart-quartier').value;
+            const arriveeRegion = document.getElementById('arrivee-region').value;
+            const arriveeQuartier = document.getElementById('arrivee-quartier').value;
+            const selectedVehicle = document.querySelector('input[name="vehicle-option"]:checked');
+            const vehicle = selectedVehicle ? selectedVehicle.value : 'Berline / Taxi';
+            const date = new Date().toLocaleString();
 
-            modal.classList.remove('hidden');
-        }
-
-        function closeQrModal() {
-            document.getElementById('qrModal').classList.add('hidden');
-        }
-
-        function loadClientLocation() {
-            const rawInput = document.getElementById('inputLoc').value.trim();
-            if (!rawInput) return;
-
-            const statusMsg = document.getElementById('locStatusMsg');
-            const frameContainer = document.getElementById('mapFrameContainer');
-            const mapActions = document.getElementById('mapActions');
-            const btnClear = document.getElementById('btnClearMap');
-
-            // Parsing coordinates or address
-            let searchQuery = rawInput;
-            const coordMatch = rawInput.match(/(-?\d{1,3}(?:\.\d+)?)\s*[,;\s]\s*(-?\d{1,3}\.\d+)/);
-
-            if (coordMatch) {
-                searchQuery = `${coordMatch[1]},${coordMatch[2]}`;
-            }
-
-            const encoded = encodeURIComponent(searchQuery);
-            frameContainer.innerHTML = `
-        <iframe class="w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encoded}&z=15&output=embed"></iframe>
-      `;
-
-            document.getElementById('btnExternalRoute').href = `https://www.google.com/maps/dir/?api=1&destination=${encoded}`;
-            mapActions.classList.remove('hidden');
-            btnClear.classList.remove('hidden');
-            statusMsg.textContent = `Position affichée : ${searchQuery}`;
-            statusMsg.className = 'text-xs text-emerald-400 font-bold';
-        }
-
-        function useMyLocation() {
-            if (!navigator.geolocation) {
-                alert('La géolocalisation n\'est pas disponible sur votre téléphone.');
-                return;
-            }
-            document.getElementById('locStatusMsg').textContent = 'Recherche de votre position GPS en cours...';
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const lat = pos.coords.latitude.toFixed(6);
-                    const lng = pos.coords.longitude.toFixed(6);
-                    document.getElementById('inputLoc').value = `${lat}, ${lng}`;
-                    loadClientLocation();
-                },
-                () => {
-                    document.getElementById('locStatusMsg').textContent = 'Accès GPS refusé. Veuillez autoriser la position.';
-                    document.getElementById('locStatusMsg').className = 'text-xs text-rose-400';
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
-        }
-
-        function clearMap() {
-            document.getElementById('inputLoc').value = '';
-            document.getElementById('mapFrameContainer').innerHTML = `<span>La carte interactive s'affichera ici après avoir validé un lieu.</span>`;
-            document.getElementById('mapActions').classList.add('hidden');
-            document.getElementById('btnClearMap').classList.add('hidden');
-            document.getElementById('locStatusMsg').textContent = 'Carte effacée.';
-            document.getElementById('locStatusMsg').className = 'text-xs text-slate-400';
-        }
-
-        function renderContacts() {
-            const container = document.getElementById('contactsGrid');
-            container.innerHTML = state.contacts.map((c, idx) => `
-        <div class="bg-slate-950 p-3 rounded-xl border ${c.isUrgent ? 'border-rose-500/30 bg-rose-500/5' : 'border-slate-800'} flex flex-col justify-between space-y-2 text-xs">
-          <div>
-            <span class="font-extrabold text-slate-200 block">${c.name}</span>
-            <span class="font-mono text-slate-400 block">${c.phone || 'Non renseigné'}</span>
-          </div>
-          <div class="flex gap-2">
-            <a href="${c.phone ? 'tel:' + c.phone.replace(/\s/g, '') : '#'}" onclick="soundFx.clickSound()" class="flex-1 text-center font-bold py-1.5 rounded-lg ${c.isUrgent ? 'bg-rose-600 text-white hover:bg-rose-500' : 'bg-slate-800 text-amber-400 hover:bg-slate-700'} transition">
-              📞 Appeler
-            </a>
-            <button onclick="copyPhone('${c.phone}')" class="px-2 py-1.5 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg hover:text-white transition">
-              📋
-            </button>
-            <button onclick="deleteContact(${idx})" class="px-2 py-1.5 bg-slate-900 border border-slate-800 text-rose-400 rounded-lg hover:bg-rose-500/20 transition">
-              ×
-            </button>
-          </div>
-        </div>
-      `).join('');
-        }
-
-        function copyPhone(num) {
-            if (!num) return;
-            navigator.clipboard.writeText(num);
-            alert('Numéro copié : ' + num);
-        }
-
-        function addNewContact() {
-            const name = prompt('Nom du contact :');
-            const phone = prompt('Numéro de téléphone :');
-            if (name && phone) {
-                state.contacts.push({ name: name, phone: phone, isUrgent: false });
-                saveState();
-                renderContacts();
-            }
-        }
-
-        function deleteContact(idx) {
-            if (confirm('Supprimer ce contact ?')) {
-                state.contacts.splice(idx, 1);
-                saveState();
-                renderContacts();
-            }
-        }
-
-        function renderBossDashboard(totalGains, totalVers, totalDeps) {
-            document.getElementById('bossTotalEncaisse').textContent = formatCurrency(totalGains);
-            document.getElementById('bossTotalVerse').textContent = formatCurrency(totalVers);
-            document.getElementById('bossTotalExpenses').textContent = formatCurrency(totalDeps);
-
-            const target = state.targetBoss || 15000;
-            document.getElementById('bossTargetInput').value = target;
-
-            const pct = Math.min(100, Math.round((totalVers / target) * 100));
-            document.getElementById('bossTargetPercent').textContent = pct + '%';
-            document.getElementById('bossProgressBar').style.width = pct + '%';
-
-            // Audit log table
-            const auditContainer = document.getElementById('bossAuditTable');
-            const auditItems = state.versements.map(v => ({ timestamp: v.timestamp, type: 'Versement', detail: 'Versement au Propriétaire', amount: v.amount, color: 'text-blue-400' }))
-                .concat(state.expenses.map(e => ({ timestamp: e.timestamp, type: 'Dépense', detail: e.desc, amount: -e.amount, color: 'text-rose-400' })))
-                .sort((a, b) => b.timestamp - a.timestamp);
-
-            if (auditItems.length === 0) {
-                auditContainer.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">Aucun mouvement financier enregistré pour le moment.</td></tr>`;
+            if (!name || !departRegion || !arriveeRegion) {
+                alert("Veuillez remplir au moins votre nom, votre région de départ et d'arrivée.");
                 return;
             }
 
-            auditContainer.innerHTML = auditItems.map(item => `
-        <tr class="hover:bg-slate-900/50 transition">
-          <td class="p-3 font-mono text-slate-500">${formatTime(item.timestamp)}</td>
-          <td class="p-3 font-bold text-slate-300">${item.type}</td>
-          <td class="p-3 text-slate-400">${item.detail}</td>
-          <td class="p-3 text-right font-mono font-bold ${item.color}">${formatCurrency(item.amount)}</td>
-        </tr>
-      `).join('');
+            const message = `*Nouvelle Réservation - Karim Travel*%0A%0A- *Nom* : ${name}%0A- *Téléphone* : ${phone}%0A- *Départ* : ${departQuartier}, ${departRegion}%0A- *Arrivée* : ${arriveeQuartier}, ${arriveeRegion}%0A- *Véhicule* : ${vehicle}%0A- *Date* : ${date}`;
+
+            const phoneNumber = "221770000000"; // Remplace par ton numéro WhatsApp professionnel
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
         }
 
-        function updateBossTarget() {
-            const val = Number(document.getElementById('bossTargetInput').value);
-            if (val > 0) {
-                state.targetBoss = val;
-                saveState();
-                render();
-            }
-        }
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            sendToWhatsApp();
+        });
 
-        function exportBilanPrint() {
-            const totalGains = state.rides.reduce((acc, r) => acc + r.amount, 0);
-            const totalDeps = state.expenses.reduce((acc, r) => acc + r.amount, 0);
-            const totalVers = state.versements.reduce((acc, r) => acc + r.amount, 0);
-
-            document.getElementById('printDate').textContent = 'Date: ' + new Date().toLocaleDateString('fr-FR') + ' ' + new Date().toLocaleTimeString('fr-FR');
-
-            const content = document.getElementById('printContent');
-            content.innerHTML = `
-        <div class="border-b pb-2">
-          <p><strong>Véhicule :</strong> ${state.vehicle}</p>
-          <p><strong>Kilométrage :</strong> ${state.car.km} km</p>
-        </div>
-        <div class="space-y-1">
-          <p><strong>Total Courses Brut :</strong> ${formatCurrency(totalGains)} (${state.rides.length} courses)</p>
-          <p><strong>Total Dépenses :</strong> -${formatCurrency(totalDeps)}</p>
-          <p><strong>Total Versé au Boss :</strong> -${formatCurrency(totalVers)}</p>
-          <hr class="my-2 border-black">
-          <p class="text-lg"><strong>Reste en Caisse Chauffeur :</strong> ${formatCurrency(totalGains - totalDeps - totalVers)}</p>
-        </div>
-        <div class="mt-6 pt-4 border-t border-black text-xs">
-          <p>Signé par le Chauffeur: __________________</p>
-          <br>
-          <p>Signé par le Propriétaire: __________________</p>
-        </div>
-      `;
-
-            window.print();
-        }
-
-        function resetDay() {
-            if (confirm('Voulez-vous réinitialiser les courses, dépenses et versements de la journée ? (Les contacts, QR codes et carnet de santé restent conservés)')) {
-                state.rides = [];
-                state.expenses = [];
-                state.versements = [];
-                saveState();
-                render();
-            }
-        }
-
-        function exportDataJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `karim_travel_backup_${new Date().toISOString().slice(0, 10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        // Live Clock interval
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('topClock').textContent = now.toLocaleTimeString('fr-FR');
-        }, 1000);
-
-        document.getElementById('headerDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-        // Initialize application
-        window.onload = function () {
-            loadState();
-            render();
-        };
-    </script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const regionSelect = document.getElementById("region-select");
-    const displayArea = document.getElementById("display-area");
-
-    if (regionSelect) {
-    regionSelect.addEventListener("change", function () {
-    const selectedRegion = this.value;
-
-    if (selectedRegion) {
-    // Affichage dynamique selon la région choisie
-    displayArea.innerHTML = `
-    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
-        <p><strong>Région sélectionnée :</strong> ${selectedRegion}</p>
-        <p style="color: green;">Statut : Réservation affichée avec succès pour ${selectedRegion}.</p>
-    </div>
-    `;
-    } else {
-    displayArea.innerHTML = `<p>Aucune région sélectionnée.</p>`;
-    }
-    });
-    }
-    });
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDMpAwAseBRLOE3ssUY3-m_0sFYitV6VkQ",
-            authDomain: "jop-pro3.firebaseapp.com",
-            databaseURL: "https://jop-pro3-default-rtdb.firebaseio.com",
-            projectId: "jop-pro3",
-            storageBucket: "jop-pro3.firebasestorage.app",
-            messagingSenderId: "586800522618",
-            appId: "1:586800522618:web:a364abbedc4b0fcfaba2c3"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
+        whatsappBtn.addEventListener('click', function () {
+            sendToWhatsApp();
+        });
     </script>
 </body>
 
 </html>
-```
